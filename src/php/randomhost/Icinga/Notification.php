@@ -2,7 +2,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * Base class definition
+ * Notification interface definition
  *
  * PHP version 5
  *
@@ -13,13 +13,10 @@
  * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
  * @link      https://pear.random-host.com/
  */
-namespace randomhost\Icinga\Checks;
-
-use randomhost\Icinga\Check as Check;
-use randomhost\Icinga\Base as IcingaBase;
+namespace randomhost\Icinga;
 
 /**
- * Base class for Icinga check plugins
+ * Interface definition for Icinga notification plugins
  *
  * @category  Monitoring
  * @package   PHP_Icinga
@@ -29,25 +26,6 @@ use randomhost\Icinga\Base as IcingaBase;
  * @version   Release: @package_version@
  * @link      https://pear.random-host.com/
  */
-abstract class Base extends IcingaBase implements Check
+interface Notification extends Plugin
 {
-    /**
-     * Performs the Icinga check.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        $this->preRun();
-        $this->check();
-        $this->postRun();
-    }
-
-    /**
-     * Must be implemented by all child classes and contains the main
-     * Icinga check plugin logic.
-     *
-     * @return void
-     */
-    protected abstract function check();
 } 

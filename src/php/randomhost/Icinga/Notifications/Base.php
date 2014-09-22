@@ -13,13 +13,13 @@
  * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
  * @link      https://pear.random-host.com/
  */
-namespace randomhost\Icinga\Checks;
+namespace randomhost\Icinga\Notifications;
 
-use randomhost\Icinga\Check as Check;
+use randomhost\Icinga\Notification as Notification;
 use randomhost\Icinga\Base as IcingaBase;
 
 /**
- * Base class for Icinga check plugins
+ * Base class for Icinga notification plugins
  *
  * @category  Monitoring
  * @package   PHP_Icinga
@@ -29,25 +29,25 @@ use randomhost\Icinga\Base as IcingaBase;
  * @version   Release: @package_version@
  * @link      https://pear.random-host.com/
  */
-abstract class Base extends IcingaBase implements Check
+abstract class Base extends IcingaBase implements Notification
 {
     /**
-     * Performs the Icinga check.
+     * Sends the Icinga notification.
      *
      * @return void
      */
     public function run()
     {
         $this->preRun();
-        $this->check();
+        $this->send();
         $this->postRun();
     }
 
     /**
      * Must be implemented by all child classes and contains the main
-     * Icinga check plugin logic.
+     * Icinga notification plugin logic.
      *
      * @return void
      */
-    protected abstract function check();
+    protected abstract function send();
 } 

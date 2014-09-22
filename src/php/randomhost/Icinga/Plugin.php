@@ -2,7 +2,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * Base class definition
+ * Plugin interface definition
  *
  * PHP version 5
  *
@@ -13,13 +13,10 @@
  * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
  * @link      https://pear.random-host.com/
  */
-namespace randomhost\Icinga\Checks;
-
-use randomhost\Icinga\Check as Check;
-use randomhost\Icinga\Base as IcingaBase;
+namespace randomhost\Icinga;
 
 /**
- * Base class for Icinga check plugins
+ * Interface definition for Icinga plugins
  *
  * @category  Monitoring
  * @package   PHP_Icinga
@@ -29,25 +26,40 @@ use randomhost\Icinga\Base as IcingaBase;
  * @version   Release: @package_version@
  * @link      https://pear.random-host.com/
  */
-abstract class Base extends IcingaBase implements Check
+interface Plugin
 {
     /**
-     * Performs the Icinga check.
+     * Icinga return code for state "OK".
      *
-     * @return void
+     * @var int
      */
-    public function run()
-    {
-        $this->preRun();
-        $this->check();
-        $this->postRun();
-    }
+    const STATE_OK = 0;
 
     /**
-     * Must be implemented by all child classes and contains the main
-     * Icinga check plugin logic.
+     * Icinga return code for state "WARNING".
+     *
+     * @var int
+     */
+    const STATE_WARNING = 1;
+
+    /**
+     * Icinga return code for state "CRITICAL".
+     *
+     * @var int
+     */
+    const STATE_CRITICAL = 2;
+
+    /**
+     * Icinga return code for state "UNKNOWN".
+     *
+     * @var int
+     */
+    const STATE_UNKNOWN = 3;
+    
+    /**
+     * Runs the Icinga plugin.
      *
      * @return void
      */
-    protected abstract function check();
+    public function run();
 } 

@@ -16,7 +16,7 @@
 namespace randomhost\Icinga;
 
 /**
- * Interface definition for Icinga plugins
+ * Interface definition for Icinga check plugins
  *
  * @category  Monitoring
  * @package   PHP_Icinga
@@ -26,40 +26,6 @@ namespace randomhost\Icinga;
  * @version   Release: @package_version@
  * @link      https://pear.random-host.com/
  */
-interface Check
+interface Check extends Plugin
 {
-    /**
-     * Icinga return code for service state "OK".
-     *
-     * @var int
-     */
-    const SERVICE_STATE_OK = 0;
-
-    /**
-     * Icinga return code for service state "WARNING".
-     *
-     * @var int
-     */
-    const SERVICE_STATE_WARNING = 1;
-
-    /**
-     * Icinga return code for service state "CRITICAL".
-     *
-     * @var int
-     */
-    const SERVICE_STATE_CRITICAL = 2;
-
-    /**
-     * Icinga return code for service state "UNKNOWN".
-     *
-     * @var int
-     */
-    const SERVICE_STATE_UNKNOWN = 3;
-
-    /**
-     * Performs the Icinga check.
-     * 
-     * @return void
-     */
-    public function run();
 } 
