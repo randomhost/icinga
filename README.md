@@ -9,7 +9,10 @@ system.
 Usage
 -----
 
-A basic approach at using this package could look like this:
+### Check plugins
+
+A basic approach at using a check plugin built with this package could look like
+this:
 
 ```php
 <?php
@@ -25,27 +28,25 @@ This will instantiate the check class for the example service and run the checks
 defined for that service. What is being checked depends on the individual check
 implementation.
 
-### The Icinga/Checks/Base class
+#### The randomhost/Icinga/Checks/Base class
 
-The abstract `Icinga/Checks/Base` class provides common methods for extending
-child classes. It implements the Icinga/Check::run() method which by default is
-the only public accessible method of a check class.
+The abstract `randomhost/Icinga/Checks/Base` class provides common methods for
+extending child classes. It implements the `randomhost/Icinga/Check::run()`
+method which by default is the only public accessible method of a check class.
 
 It takes care of parsing command line parameters, displaying status messages
 and exiting with a proper exit code which Icinga understands.
 
 All check classes should extend this class.
 
-### Implementing check classes
+#### Implementing check classes
 
-To create a check class, simply extend the `Icinga/Checks/Base` class and
-implement a protected method `check()`.
+To create a check class, simply extend the `randomhost/Icinga/Checks/Base` class
+and implement a protected method `check()`.
 
 ```php
 <?php
 namespace randomhost\Icinga\Checks;
-
-use randomhost\Icinga\Check as Check;
 
 class ExampleService extends Base
 {
@@ -54,7 +55,7 @@ class ExampleService extends Base
     // main check logic goes here
     
     $this->setMessage('Everything is fine');
-    $this->setCode(Check::SERVICE_STATE_OK);
+    $this->setCode(self::STATE_OK);
   }
 }
 ```
@@ -67,28 +68,30 @@ help output which is shown if a required parameter is missing.
 <?php
 namespace randomhost\Icinga\Checks;
 
-use randomhost\Icinga\Check as Check;
-
 class ExampleService extends Base
 {
   public function __construct() {
-    $this->setLongOptions( array(
+    $this->setLongOptions(
+      array(
         'host:',
         'port:',
         'user:',
         'password:',
         'warningThreshold:',
         'criticalThreshold:'
-    ) );
+      )
+    );
 
-    $this->setRequiredOptions( array(
+    $this->setRequiredOptions(
+      array(
         'host',
         'port',
         'user',
         'password',
         'warningThreshold',
         'criticalThreshold'
-    ) );
+      )
+    );
 
     $this->setHelp('
 Icinga plugin for checking the example service.
@@ -109,6 +112,119 @@ Icinga plugin for checking the example service.
   }
 }
 ```
+
+### Notification plugins
+
+A basic approach at using a notification plugin built with this package could
+look like this:
+
+```php
+<?php
+namespace randomhost\Icinga\Notifications;
+
+require 'psr0.autoloader.php';
+
+$check = new ExampleNotification();
+$check->run();
+```
+
+This will instantiate the notification class for the example notification plugin
+and run the logic defined for that plugin. What type of notification is being
+sent depends on the individual notification class implementation.
+
+#### The randomhost/Icinga/Notifications/Base class
+
+The abstract `randomhost/Icinga/Notifications/Base` class provides common methods
+for extending child classes. It implements the `randomhost/Icinga/Notification::run()`
+method which by default is the only public accessible method of a notification
+class.
+
+It takes care of parsing command line parameters, displaying status messages
+and exiting with a proper exit code which Icinga understands.
+
+All notification classes should extend this class.
+
+#### Implementing notification classes
+
+To create a notification class, extend the `randomhost/Icinga/Notifications/Base`
+class and implement a protected method `send()`.
+
+```php
+<?php
+namespace randomhost\Icinga\Notifications;
+
+class ExampleNotification extends Base
+{
+  protected function send() {
+    
+    // main notification logic goes here
+    
+    $this->setMessage('Notification sent');
+    $this->setCode(self::STATE_OK);
+  }
+}
+```
+
+If your notification class requires command line parameters, you can define
+those in the constructor of your notification class. This is also the right
+place to place the help output which is shown if a required parameter is missing.
+
+```php
+<?php
+namespace randomhost\Icinga\Notifications;
+
+class ExampleNotification extends Base
+{
+  public function __construct() {
+    $this->setLongOptions(
+      array(
+        'type:',
+        'service:',
+        'host:',
+        'address:',
+        'state:',
+        'time:',
+        'output:',
+        'phonenumber:',
+      )
+    );
+
+    $this->setRequiredOptions(
+      array(
+        'type',
+        'service',
+        'host',
+        'address',
+        'state',
+        'time',
+        'output',
+        'phonenumber',
+      )
+    );
+
+    $this->setHelp('
+Icinga plugin for sending notifications via the example notification provider.
+
+--type         Notification type
+--service      Service name
+--host         Host name
+--address      Host address
+--state        Service state
+--time         Notification time
+--output       Check plugin output
+--phonenumber  User phone number
+');
+  }
+  
+  protected function send() {
+    $options = $this->getOptions();
+    
+    // main notification logic goes here
+  }
+}
+```
+
+
 
 System-Wide Installation
 ------------------------
