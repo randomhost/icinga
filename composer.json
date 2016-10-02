@@ -1,0 +1,35 @@
+{
+    "name": "randomhost/icinga",
+    "type": "library",
+    "description": "Provides Icinga check and notification commands.",
+    "keywords": [
+        "Icinga",
+        "Nagios"
+    ],
+    "homepage": "https://www.random-host.com",
+    "license": "New-BSD",
+    "authors": [
+        {
+            "name": "Ch'Ih-Yu",
+            "email": "chi-yu@web.de"
+        }
+    ],
+    "config": {
+        "platform": {
+            "php": "5.3.3"
+        }
+    },
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+        "behat/behat": "~2.0",
+        "phpunit/phpunit": "~4.0",
+        "phpspec/phpspec": "~2.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "randomhost\\Icinga\\": "src/php/"
+        }
+    }
+}
