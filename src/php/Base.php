@@ -1,34 +1,19 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-
-/**
- * Base class definition
- *
- * PHP version 5
- *
- * @category  Monitoring
- * @package   PHP_Icinga
- * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2014 random-host.com
- * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
- * @link      https://pear.random-host.com/
- */
 namespace randomhost\Icinga;
 
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
- * Base class for Icinga plugins
+ * Base class for Icinga plugins.
  *
- * @category  Monitoring
- * @package   PHP_Icinga
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2014 random-host.com
- * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   Release: @package_version@
- * @link      https://pear.random-host.com/
+ * @copyright 2016 random-host.com
+ * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
+ * @link      http://github.random-host.com/icinga/
  */
 abstract class Base implements Plugin
 {
-
     /**
      * Help message for this plugin.
      *
@@ -57,14 +42,14 @@ abstract class Base implements Plugin
     protected $longOptions = array('help');
 
     /**
-     * An array of option / argument pairs.
+     * Array of option / argument pairs.
      *
      * @var array
      */
     protected $options = array();
 
     /**
-     * An array of required option / argument pairs.
+     * Array of required option / argument pairs.
      *
      * @var array
      */
@@ -85,81 +70,128 @@ abstract class Base implements Plugin
     protected $code = self::STATE_UNKNOWN;
 
     /**
-     * Runs the Icinga plugin.
+     * Returns available short options.
      *
-     * @return void
+     * @return string
      */
-    abstract public function run();
+    public function getShortOptions()
+    {
+        return (string)$this->shortOptions;
+    }
+
+    /**
+     * Returns available long options.
+     *
+     * @return array
+     */
+    public function getLongOptions()
+    {
+        return $this->longOptions;
+    }
+
+    /**
+     * Returns the Icinga plugin output.
+     *
+     * @return string
+     */
+    public function getMessage()
+    {
+        return (string)$this->message;
+    }
+
+    /**
+     * Returns the Icinga return code.
+     *
+     * @return integer
+     */
+    public function getCode()
+    {
+        return (integer)$this->code;
+    }
+
+    /**
+     * Sets command line options as returned by getopt().
+     *
+     * @param array $options Command line options.
+     *
+     * @return $this
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+
+        return $this;
+    }
 
     /**
      * Reads command line options and performs pre-run tasks.
      *
-     * @return void
+     * @return $this
      */
     protected function preRun()
     {
-        $this->options = getopt($this->shortOptions, $this->longOptions);
-        $this->displayHelp();
-        $this->checkRequiredParameters();
-    }
+        if (array_key_exists('help', $this->getOptions())) {
+            $this->displayHelp();
+        } // @codeCoverageIgnore
 
-    /**
-     * Outputs the Icinga plugin output and exits with the set Icinga return code.
-     *
-     * @return void
-     */
-    protected function postRun()
-    {
-        echo $this->getMessage();
-        exit($this->getCode());
+        $this->checkRequiredParameters();
+
+        return $this;
     }
 
     /**
      * Checks if all required parameters are set.
      *
-     * @return void
+     * @return $this
+     *
+     * @throws InvalidArgumentException Thrown in case of missing required arguments.
      */
     protected function checkRequiredParameters()
     {
         $missing = array_diff(
-            $this->requiredOptions, array_keys($this->options)
+            $this->getRequiredOptions(),
+            array_keys($this->getOptions())
         );
-        if (0 !== count($missing)) {
-            echo sprintf(
-                'Missing required parameters: %s' . PHP_EOL,
-                implode(', ', $missing)
+        if (!empty($missing)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Missing required parameters: %s',
+                    implode(', ', $missing)
+                ),
+                self::STATE_UNKNOWN
             );
-            exit(self::STATE_UNKNOWN);
         }
+
+        return $this;
     }
 
     /**
-     * Displays a help message and exits.
-     *
-     * @return void
+     * Displays a help message.
      */
     protected function displayHelp()
     {
-        if (array_key_exists('help', $this->options)) {
-            echo $this->getHelp();
-            exit(0);
-        }
+        throw new RuntimeException(
+            $this->getHelp(),
+            self::STATE_UNKNOWN
+        );
     }
 
     /**
-     * Set help message for this plugin.
+     * Sets the help message for this plugin.
      *
-     * @param string $help Help message text
+     * @param string $help Help message text.
      *
-     * @return void
+     * @return $this
      */
     protected function setHelp($help)
     {
         $this->help = (string)$help;
+
+        return $this;
     }
 
     /**
-     * Return help message for this plugin.
+     * Returns the help message for this plugin.
      *
      * @return string
      */
@@ -169,52 +201,36 @@ abstract class Base implements Plugin
     }
 
     /**
-     * Set short options.
+     * Sets short options.
      *
      * Each character in this string will be used as option characters.
      * Only a-z, A-Z and 0-9 are allowed.
      *
-     * @param string $options Option characters
+     * @param string $options Option characters.
      *
-     * @return void
+     * @return $this
      */
     protected function setShortOptions($options)
     {
         $this->shortOptions = (string)$options;
+
+        return $this;
     }
 
     /**
-     * Return short options.
-     *
-     * @return string
-     */
-    protected function getShortOptions()
-    {
-        return (string)$this->shortOptions;
-    }
-
-    /**
-     * Set long options.
+     * Sets long options.
      *
      * Each element in this array will be used as option strings.
      *
-     * @param array $options Array with option strings
+     * @param array $options Array with option strings.
      *
-     * @return void
+     * @return $this
      */
     protected function setLongOptions(array $options)
     {
-        $this->longOptions = array_merge($this->longOptions, $options);
-    }
+        $this->longOptions = array_merge($this->getLongOptions(), $options);
 
-    /**
-     * Return long options.
-     *
-     * @return array
-     */
-    protected function getLongOptions()
-    {
-        return (string)$this->longOptions;
+        return $this;
     }
 
     /**
@@ -228,68 +244,54 @@ abstract class Base implements Plugin
     }
 
     /**
-     * Set required options.
+     * Sets required options.
      *
-     * @param array $options Array with option strings
+     * @param array $options Array with option strings.
      *
-     * @return void
+     * @return $this
      */
     protected function setRequiredOptions(array $options)
     {
         $this->requiredOptions = $options;
+
+        return $this;
     }
 
     /**
-     * Return required options.
+     * Returns required options.
      *
      * @return array
      */
     protected function getRequiredOptions()
     {
-        return (string)$this->requiredOptions;
+        return $this->requiredOptions;
     }
 
     /**
-     * Set Icinga plugin output.
+     * Sets Icinga plugin output.
      *
-     * @param string $message Plugin output
+     * @param string $message Plugin output.
      *
-     * @return void
+     * @return $this
      */
     protected function setMessage($message)
     {
         $this->message = (string)$message;
+
+        return $this;
     }
 
     /**
-     * Return Icinga plugin output.
+     * Sets Icinga return code.
      *
-     * @return string
-     */
-    protected function getMessage()
-    {
-        return (string)$this->message;
-    }
-
-    /**
-     * Set Icinga return code.
+     * @param int $code Return code.
      *
-     * @param int $code Return code
-     *
-     * @return void
+     * @return $this
      */
     protected function setCode($code)
     {
         $this->code = (integer)$code;
-    }
 
-    /**
-     * Return Icinga return code.
-     *
-     * @return integer
-     */
-    protected function getCode()
-    {
-        return (integer)$this->code;
+        return $this;
     }
-} 
+}

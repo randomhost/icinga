@@ -1,13 +1,48 @@
-[![Build Status](https://travis-ci.org/Random-Host/PHP_Icinga.svg)](https://travis-ci.org/Random-Host/PHP_Icinga)
+[![Build Status][0]][1]
 
-PHP_Icinga
-==========
+randomhost/icinga
+=================
 
 This package provides check and notification commands for the Icinga monitoring
 system.
 
 Usage
 -----
+
+### The Base class
+
+The abstract `Base` class implements the following public methods which are
+available for both, check and notification classes.
+
+- `Base::getShortOptions()`  
+    Returns available short options. The return value is supposed to be passed
+    to PHP's built-in `getopt()` function as the first parameter and is used for
+    setting up the command line arguments accepted by the check class.
+
+- `Base::getLongOptions()`  
+    Returns available long options. The return value is supposed to be passed to
+    PHP's built-in `getopt()` function as the second parameter and is used for
+    setting up the command line arguments accepted by the check class.
+    
+    The `Base` class comes with the pre-defined long option `--help` which
+    triggers the built-in help method `Base::displayHelp()`.
+
+- `Base::getMessage()`  
+    Returns the plugin output. The return value is supposed to be echoed to
+    stdout and defines the status message which will be passed to Icinga.
+
+- `Base::getCode()`  
+    Returns the return code. The return value is supposed to be passed to PHP's
+    built-in `exit()` function and defines the status code which will be passed
+    to Icinga.
+
+- `Base::setOptions($options)`  
+    This method accepts parsed command line arguments as returned by PHP's
+    built-in `getopt()` function.
+
+Check and notification classes should **NOT** extend this class directly. They
+should extend their corresponding base class `Check\Base` or `Notification\Base`
+accordingly.
 
 ### Check plugins
 
@@ -16,47 +51,51 @@ this:
 
 ```php
 <?php
-namespace randomhost\Icinga\Checks;
+namespace randomhost\Icinga\Check;
 
-require 'psr0.autoloader.php';
+require_once '/path/to/vendor/autoload.php';
 
 $check = new ExampleService();
 $check->run();
+
+echo $check->getMessage();
+exit($check->getCode());
 ```
 
 This will instantiate the check class for the example service and run the checks
 defined for that service. What is being checked depends on the individual check
 implementation.
 
-#### The randomhost/Icinga/Checks/Base class
+#### The Check\Base class
 
-The abstract `randomhost/Icinga/Checks/Base` class provides common methods for
-extending child classes. It implements the `randomhost/Icinga/Check::run()`
-method which by default is the only public accessible method of a check class.
+The abstract `Check\Base` class provides common methods for extending child
+classes. It implements one public method in addition to the ones provided by
+the common `Base` class:
 
-It takes care of parsing command line parameters, displaying status messages
-and exiting with a proper exit code which Icinga understands.
+- `Check\Base::run()`  
+    Takes care of validating command line parameters, displaying help output and
+    executing the main check plugin logic.
 
 All check classes should extend this class.
 
 #### Implementing check classes
 
-To create a check class, simply extend the `randomhost/Icinga/Checks/Base` class
-and implement a protected method `check()`.
+To create a check class, simply extend the `Check\Base` class and implement a
+protected method `check()`.
 
 ```php
 <?php
-namespace randomhost\Icinga\Checks;
+namespace randomhost\Icinga\Check;
 
-class ExampleService extends Base
+class ExampleService extends Base implements Check
 {
-  protected function check() {
-    
-    // main check logic goes here
-    
-    $this->setMessage('Everything is fine');
-    $this->setCode(self::STATE_OK);
-  }
+    protected function check()
+    {
+        // main check logic goes here
+        
+        $this->setMessage('Everything is fine');
+        $this->setCode(self::STATE_OK);
+    }
 }
 ```
 
@@ -66,34 +105,35 @@ help output which is shown if a required parameter is missing.
 
 ```php
 <?php
-namespace randomhost\Icinga\Checks;
+namespace randomhost\Icinga\Check;
 
-class ExampleService extends Base
+class ExampleService extends Base implements Check
 {
-  public function __construct() {
-    $this->setLongOptions(
-      array(
-        'host:',
-        'port:',
-        'user:',
-        'password:',
-        'warningThreshold:',
-        'criticalThreshold:'
-      )
-    );
-
-    $this->setRequiredOptions(
-      array(
-        'host',
-        'port',
-        'user',
-        'password',
-        'warningThreshold',
-        'criticalThreshold'
-      )
-    );
-
-    $this->setHelp('
+    public function __construct()
+    {
+        $this->setLongOptions(
+            array(
+                'host:',
+                'port:',
+                'user:',
+                'password:',
+                'warningThreshold:',
+                'criticalThreshold:'
+            )
+        );
+    
+        $this->setRequiredOptions(
+            array(
+                'host',
+                'port',
+                'user',
+                'password',
+                'warningThreshold',
+                'criticalThreshold'
+            )
+        );
+        
+        $this->setHelp('
 Icinga plugin for checking the example service.
 
 --host              Example service IP address or hostname
@@ -102,14 +142,15 @@ Icinga plugin for checking the example service.
 --password          Example service password
 --warningThreshold  Threshold to trigger the WARNING state
 --criticalThreshold Threshold to trigger the CRITICAL state
-');
-  }
-  
-  protected function check() {
-    $options = $this->getOptions();
+        ');
+    }
     
-    // main check logic goes here
-  }
+    protected function check()
+    {
+        $options = $this->getOptions();
+        
+        // main check logic goes here
+    }
 }
 ```
 
@@ -120,48 +161,51 @@ look like this:
 
 ```php
 <?php
-namespace randomhost\Icinga\Notifications;
+namespace randomhost\Icinga\Notification;
 
-require 'psr0.autoloader.php';
+require_once '/path/to/vendor/autoload.php';
 
-$check = new ExampleNotification();
-$check->run();
+$notification = new ExampleNotification();
+$notification->run();
+
+echo $notification->getMessage();
+exit($notification->getCode());
 ```
 
 This will instantiate the notification class for the example notification plugin
 and run the logic defined for that plugin. What type of notification is being
 sent depends on the individual notification class implementation.
 
-#### The randomhost/Icinga/Notifications/Base class
+#### The Notification\Base class
 
-The abstract `randomhost/Icinga/Notifications/Base` class provides common methods
-for extending child classes. It implements the `randomhost/Icinga/Notification::run()`
-method which by default is the only public accessible method of a notification
-class.
+The abstract `Notification\Base` class provides common methods for extending
+child classes. It implements one public method in addition to the ones provided
+by the common `Base` class:
 
-It takes care of parsing command line parameters, displaying status messages
-and exiting with a proper exit code which Icinga understands.
+- `Notification\Base::run()`  
+    Takes care of validating command line parameters, displaying help output and
+    executing the main notification plugin logic.
 
 All notification classes should extend this class.
 
 #### Implementing notification classes
 
-To create a notification class, extend the `randomhost/Icinga/Notifications/Base`
-class and implement a protected method `send()`.
+To create a notification class, simply extend the `Notification\Base` class and
+implement a protected method `send()`.
 
 ```php
 <?php
-namespace randomhost\Icinga\Notifications;
+namespace randomhost\Icinga\Notification;
 
-class ExampleNotification extends Base
+class ExampleNotification extends Base implements Notification
 {
-  protected function send() {
-    
-    // main notification logic goes here
-    
-    $this->setMessage('Notification sent');
-    $this->setCode(self::STATE_OK);
-  }
+    protected function send()
+    {
+        // main notification logic goes here
+        
+        $this->setMessage('Notification sent');
+        $this->setCode(self::STATE_OK);
+    }
 }
 ```
 
@@ -171,38 +215,39 @@ place to place the help output which is shown if a required parameter is missing
 
 ```php
 <?php
-namespace randomhost\Icinga\Notifications;
+namespace randomhost\Icinga\Notification;
 
-class ExampleNotification extends Base
+class ExampleNotification extends Base implements Notification
 {
-  public function __construct() {
-    $this->setLongOptions(
-      array(
-        'type:',
-        'service:',
-        'host:',
-        'address:',
-        'state:',
-        'time:',
-        'output:',
-        'phonenumber:',
-      )
-    );
-
-    $this->setRequiredOptions(
-      array(
-        'type',
-        'service',
-        'host',
-        'address',
-        'state',
-        'time',
-        'output',
-        'phonenumber',
-      )
-    );
-
-    $this->setHelp('
+    public function __construct()
+    {
+        $this->setLongOptions(
+            array(
+                'type:',
+                'service:',
+                'host:',
+                'address:',
+                'state:',
+                'time:',
+                'output:',
+                'phonenumber:',
+            )
+        );
+        
+        $this->setRequiredOptions(
+            array(
+                'type',
+                'service',
+                'host',
+                'address',
+                'state',
+                'time',
+                'output',
+                'phonenumber',
+            )
+        );
+        
+        $this->setHelp('
 Icinga plugin for sending notifications via the example notification provider.
 
 --type         Notification type
@@ -213,81 +258,24 @@ Icinga plugin for sending notifications via the example notification provider.
 --time         Notification time
 --output       Check plugin output
 --phonenumber  User phone number
-');
-  }
-  
-  protected function send() {
-    $options = $this->getOptions();
+        ');
+    }
     
-    // main notification logic goes here
-  }
+    protected function send()
+    {
+        $options = $this->getOptions();
+        
+        // main notification logic goes here
+    }
 }
 ```
 
-
-
-System-Wide Installation
-------------------------
-
-PHP_Icinga should be installed using the [PEAR Installer](http://pear.php.net).
-This installer is the PHP community's de-facto standard for installing PHP
-components.
-
-    sudo pear channel-discover pear.random-host.com
-    sudo pear install --alldeps randomhost/PHP_Icinga
-
-As A Dependency On Your Component
----------------------------------
-
-If you are creating a component that relies on PHP_Icinga, please make sure that
-you add PHP_Icinga to your component's package.xml file:
-
-```xml
-<dependencies>
-  <required>
-    <package>
-      <name>PHP_Icinga</name>
-      <channel>pear.random-host.com</channel>
-      <min>1.0.0</min>
-      <max>1.999.9999</max>
-    </package>
-  </required>
-</dependencies>
-```
-
-Development Environment
------------------------
-
-If you want to patch or enhance this component, you will need to create a
-suitable development environment. The easiest way to do that is to install
-phix4componentdev:
-
-    # phix4componentdev
-    sudo apt-get install php5-xdebug
-    sudo apt-get install php5-imagick
-    sudo pear channel-discover pear.phix-project.org
-    sudo pear -D auto_discover=1 install -Ba phix/phix4componentdev
-
-You can then clone the git repository:
-
-    # PHP_Icinga
-    git clone https://github.com/Random-Host/PHP_Icinga.git
-
-Then, install a local copy of this component's dependencies to complete the
-development environment:
-
-    # build vendor/ folder
-    phing build-vendor
-
-To make life easier for you, common tasks (such as running unit tests,
-generating code review analytics, and creating the PEAR package) have been
-automated using [phing](http://phing.info).  You'll find the automated steps
-inside the build.xml file that ships with the component.
-
-Run the command 'phing' in the component's top-level folder to see the full list
-of available automated tasks.
 
 License
 -------
 
 See LICENSE.txt for full license details.
+
+
+[0]: https://travis-ci.org/randomhost/icinga.svg?branch=master
+[1]: https://travis-ci.org/randomhost/icinga

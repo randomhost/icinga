@@ -1,30 +1,13 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-
-/**
- * Plugin interface definition
- *
- * PHP version 5
- *
- * @category  Monitoring
- * @package   PHP_Icinga
- * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2014 random-host.com
- * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
- * @link      https://pear.random-host.com/
- */
 namespace randomhost\Icinga;
 
 /**
- * Interface definition for Icinga plugins
+ * Interface definition for Icinga plugins.
  *
- * @category  Monitoring
- * @package   PHP_Icinga
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2014 random-host.com
- * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   Release: @package_version@
- * @link      https://pear.random-host.com/
+ * @copyright 2016 random-host.com
+ * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
+ * @link      http://github.random-host.com/icinga/
  */
 interface Plugin
 {
@@ -55,11 +38,39 @@ interface Plugin
      * @var int
      */
     const STATE_UNKNOWN = 3;
-    
+
+    /**
+     * Returns available short options.
+     *
+     * @return string
+     */
+    public function getShortOptions();
+
+    /**
+     * Returns available long options.
+     *
+     * @return array
+     */
+    public function getLongOptions();
+
+    /**
+     * Returns the Icinga plugin output.
+     *
+     * @return string
+     */
+    public function getMessage();
+
+    /**
+     * Returns the Icinga return code.
+     *
+     * @return integer
+     */
+    public function getCode();
+
     /**
      * Runs the Icinga plugin.
      *
-     * @return void
+     * @return $this
      */
     public function run();
-} 
+}
