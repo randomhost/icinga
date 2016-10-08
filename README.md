@@ -56,6 +56,12 @@ namespace randomhost\Icinga\Check;
 require_once '/path/to/vendor/autoload.php';
 
 $check = new ExampleService();
+$check->setOptions(
+    getopt(
+        $check->getShortOptions(),
+        $check->getLongOptions()
+    )
+);
 $check->run();
 
 echo $check->getMessage();
@@ -166,6 +172,12 @@ namespace randomhost\Icinga\Notification;
 require_once '/path/to/vendor/autoload.php';
 
 $notification = new ExampleNotification();
+$notification->setOptions(
+    getopt(
+        $notification->getShortOptions(),
+        $notification->getLongOptions()
+    )
+);
 $notification->run();
 
 echo $notification->getMessage();
