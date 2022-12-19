@@ -1,19 +1,22 @@
 <?php
-namespace randomhost\Icinga\Check;
 
+declare(strict_types=1);
+
+namespace randomhost\Icinga\Tests\Notification;
+
+use PHPUnit\Framework\TestCase;
 use randomhost\Icinga\Plugin;
-
-require_once 'Stub.php';
 
 /**
  * Unit test for Base.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2016 random-host.com
- * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
- * @link      http://github.random-host.com/icinga/
+ * @copyright 2022 Random-Host.tv
+ * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
+ *
+ * @see https://github.random-host.tv
  */
-class StubTest extends \PHPUnit_Framework_TestCase
+class StubTest extends TestCase
 {
     public function testRunWithoutParameters()
     {
@@ -41,9 +44,9 @@ class StubTest extends \PHPUnit_Framework_TestCase
 
         $stub = new Stub($helpText);
 
-        $options = array(
-            'help' => ''
-        );
+        $options = [
+            'help' => '',
+        ];
 
         $longOpts = array_keys($options);
 
@@ -81,10 +84,10 @@ class StubTest extends \PHPUnit_Framework_TestCase
     {
         $statusMessage = 'test with long options';
 
-        $options = array(
+        $options = [
             'param1' => 'value1',
             'param2' => 'value2',
-        );
+        ];
 
         $longOpts = array_keys($options);
 
@@ -92,14 +95,14 @@ class StubTest extends \PHPUnit_Framework_TestCase
             '',
             $longOpts,
             '',
-            array(),
+            [],
             $statusMessage,
             Plugin::STATE_UNKNOWN
         );
 
         $this->assertSame(
             array_merge(
-                array('help'),
+                ['help'],
                 $longOpts
             ),
             $stub->getLongOptions()
@@ -132,18 +135,18 @@ class StubTest extends \PHPUnit_Framework_TestCase
     {
         $statusMessage = 'test with short options';
 
-        $options = array(
+        $options = [
             'a' => '1',
             'b' => '2',
-        );
+        ];
 
         $shortOpts = implode('', array_keys($options));
 
         $stub = new Stub(
             '',
-            array(),
+            [],
             $shortOpts,
-            array(),
+            [],
             $statusMessage,
             Plugin::STATE_UNKNOWN
         );
@@ -180,10 +183,10 @@ class StubTest extends \PHPUnit_Framework_TestCase
     {
         $statusMessage = 'test with required options';
 
-        $options = array(
+        $options = [
             'param1' => 'value1',
             'param2' => 'value2',
-        );
+        ];
 
         $longOpts = array_keys($options);
 
@@ -198,7 +201,7 @@ class StubTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             array_merge(
-                array('help'),
+                ['help'],
                 $longOpts
             ),
             $stub->getLongOptions()
@@ -231,10 +234,10 @@ class StubTest extends \PHPUnit_Framework_TestCase
     {
         $statusMessage = 'test with missing required options';
 
-        $options = array(
+        $options = [
             'param1' => 'value1',
             'param2' => 'value2',
-        );
+        ];
 
         $longOpts = array_keys($options);
 
@@ -249,7 +252,7 @@ class StubTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             array_merge(
-                array('help'),
+                ['help'],
                 $longOpts
             ),
             $stub->getLongOptions()

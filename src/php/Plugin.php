@@ -1,13 +1,17 @@
 <?php
+
+declare(strict_types=1);
+
 namespace randomhost\Icinga;
 
 /**
  * Interface definition for Icinga plugins.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2016 random-host.com
- * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
- * @link      http://github.random-host.com/icinga/
+ * @copyright 2022 Random-Host.tv
+ * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
+ *
+ * @see https://github.random-host.tv
  */
 interface Plugin
 {
@@ -16,61 +20,61 @@ interface Plugin
      *
      * @var int
      */
-    const STATE_OK = 0;
+    public const STATE_OK = 0;
 
     /**
      * Icinga return code for state "WARNING".
      *
      * @var int
      */
-    const STATE_WARNING = 1;
+    public const STATE_WARNING = 1;
 
     /**
      * Icinga return code for state "CRITICAL".
      *
      * @var int
      */
-    const STATE_CRITICAL = 2;
+    public const STATE_CRITICAL = 2;
 
     /**
      * Icinga return code for state "UNKNOWN".
      *
      * @var int
      */
-    const STATE_UNKNOWN = 3;
+    public const STATE_UNKNOWN = 3;
 
     /**
      * Returns available short options.
      *
      * @return string
      */
-    public function getShortOptions();
+    public function getShortOptions(): string;
 
     /**
      * Returns available long options.
      *
      * @return array
      */
-    public function getLongOptions();
+    public function getLongOptions(): array;
 
     /**
      * Returns the Icinga plugin output.
      *
      * @return string
      */
-    public function getMessage();
+    public function getMessage(): string;
 
     /**
      * Returns the Icinga return code.
      *
-     * @return integer
+     * @return int
      */
-    public function getCode();
+    public function getCode(): int;
 
     /**
      * Runs the Icinga plugin.
      *
      * @return $this
      */
-    public function run();
+    public function run(): self;
 }

@@ -1,15 +1,28 @@
-[![Build Status][0]][1]
+[![Build Status][1]][2]
 
-randomhost/icinga
-=================
+# randomhost/icinga
+
+<!-- TOC -->
+* [1. Purpose](#1-purpose)
+* [2. Usage](#2-usage)
+  * [2.1. Base Class](#21-base-class)
+  * [2.2. Check Plugins](#22-check-plugins)
+    * [2.2.1. Check\Base Class](#221-checkbase-class)
+    * [2.2.2. Implementing Check Classes](#222-implementing-check-classes)
+  * [2.3. Notification Plugins](#23-notification-plugins)
+    * [2.3.1. Notification\Base Class](#231-notificationbase-class)
+    * [2.3.2. Implementing Notification Classes](#232-implementing-notification-classes)
+* [3. License](#3-license)
+<!-- TOC -->
+
+## 1. Purpose
 
 This package provides check and notification commands for the Icinga monitoring
 system.
 
-Usage
------
+## 2. Usage
 
-### The Base class
+### 2.1. Base Class
 
 The abstract `Base` class implements the following public methods which are
 available for both, check and notification classes.
@@ -44,7 +57,7 @@ Check and notification classes should **NOT** extend this class directly. They
 should extend their corresponding base class `Check\Base` or `Notification\Base`
 accordingly.
 
-### Check plugins
+### 2.2. Check Plugins
 
 A basic approach at using a check plugin built with this package could look like
 this:
@@ -72,7 +85,7 @@ This will instantiate the check class for the example service and run the checks
 defined for that service. What is being checked depends on the individual check
 implementation.
 
-#### The Check\Base class
+#### 2.2.1. Check\Base Class
 
 The abstract `Check\Base` class provides common methods for extending child
 classes. It implements one public method in addition to the ones provided by
@@ -84,7 +97,7 @@ the common `Base` class:
 
 All check classes should extend this class.
 
-#### Implementing check classes
+#### 2.2.2. Implementing Check Classes
 
 To create a check class, simply extend the `Check\Base` class and implement a
 protected method `check()`.
@@ -93,14 +106,18 @@ protected method `check()`.
 <?php
 namespace randomhost\Icinga\Check;
 
+use randomhost\Icinga\Plugin;
+
 class ExampleService extends Base implements Check
 {
-    protected function check()
+    protected function check(): Plugin
     {
         // main check logic goes here
         
         $this->setMessage('Everything is fine');
         $this->setCode(self::STATE_OK);
+        
+        return $this;
     }
 }
 ```
@@ -113,30 +130,32 @@ help output which is shown if a required parameter is missing.
 <?php
 namespace randomhost\Icinga\Check;
 
+use randomhost\Icinga\Plugin;
+
 class ExampleService extends Base implements Check
 {
     public function __construct()
     {
         $this->setLongOptions(
-            array(
+            [
                 'host:',
                 'port:',
                 'user:',
                 'password:',
                 'warningThreshold:',
                 'criticalThreshold:'
-            )
+            ]
         );
     
         $this->setRequiredOptions(
-            array(
+            [
                 'host',
                 'port',
                 'user',
                 'password',
                 'warningThreshold',
                 'criticalThreshold'
-            )
+            ]
         );
         
         $this->setHelp('
@@ -151,16 +170,18 @@ Icinga plugin for checking the example service.
         ');
     }
     
-    protected function check()
+    protected function check(): Plugin
     {
         $options = $this->getOptions();
         
         // main check logic goes here
+        
+        return $this;
     }
 }
 ```
 
-### Notification plugins
+### 2.3. Notification Plugins
 
 A basic approach at using a notification plugin built with this package could
 look like this:
@@ -188,7 +209,7 @@ This will instantiate the notification class for the example notification plugin
 and run the logic defined for that plugin. What type of notification is being
 sent depends on the individual notification class implementation.
 
-#### The Notification\Base class
+#### 2.3.1. Notification\Base Class
 
 The abstract `Notification\Base` class provides common methods for extending
 child classes. It implements one public method in addition to the ones provided
@@ -200,7 +221,7 @@ by the common `Base` class:
 
 All notification classes should extend this class.
 
-#### Implementing notification classes
+#### 2.3.2. Implementing Notification Classes
 
 To create a notification class, simply extend the `Notification\Base` class and
 implement a protected method `send()`.
@@ -209,14 +230,18 @@ implement a protected method `send()`.
 <?php
 namespace randomhost\Icinga\Notification;
 
+use randomhost\Icinga\Plugin;
+
 class ExampleNotification extends Base implements Notification
 {
-    protected function send()
+    protected function send(): Plugin
     {
         // main notification logic goes here
         
         $this->setMessage('Notification sent');
         $this->setCode(self::STATE_OK);
+        
+        return $this;
     }
 }
 ```
@@ -229,12 +254,14 @@ place to place the help output which is shown if a required parameter is missing
 <?php
 namespace randomhost\Icinga\Notification;
 
+use randomhost\Icinga\Plugin;
+
 class ExampleNotification extends Base implements Notification
 {
     public function __construct()
     {
         $this->setLongOptions(
-            array(
+            [
                 'type:',
                 'service:',
                 'host:',
@@ -243,11 +270,11 @@ class ExampleNotification extends Base implements Notification
                 'time:',
                 'output:',
                 'phonenumber:',
-            )
+            ]
         );
         
         $this->setRequiredOptions(
-            array(
+            [
                 'type',
                 'service',
                 'host',
@@ -256,7 +283,7 @@ class ExampleNotification extends Base implements Notification
                 'time',
                 'output',
                 'phonenumber',
-            )
+            ]
         );
         
         $this->setHelp('
@@ -273,21 +300,21 @@ Icinga plugin for sending notifications via the example notification provider.
         ');
     }
     
-    protected function send()
+    protected function send(): Plugin
     {
         $options = $this->getOptions();
         
         // main notification logic goes here
+        
+        return $this;
     }
 }
 ```
 
-
-License
--------
+## 3. License
 
 See LICENSE.txt for full license details.
 
 
-[0]: https://travis-ci.org/randomhost/icinga.svg?branch=master
-[1]: https://travis-ci.org/randomhost/icinga
+[1]: https://github.com/randomhost/icinga/actions/workflows/php.yml/badge.svg
+[2]: https://github.com/randomhost/icinga/actions/workflows/php.yml

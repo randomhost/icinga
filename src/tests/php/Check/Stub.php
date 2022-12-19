@@ -1,15 +1,21 @@
 <?php
-namespace randomhost\Icinga\Check;
 
+declare(strict_types=1);
+
+namespace randomhost\Icinga\Tests\Check;
+
+use randomhost\Icinga\Check\Base;
+use randomhost\Icinga\Check\Check;
 use randomhost\Icinga\Plugin;
 
 /**
  * Testing stub for randomhost\Icinga\Check\Base.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2016 random-host.com
- * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
- * @link      http://github.random-host.com/icinga/
+ * @copyright 2022 Random-Host.tv
+ * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
+ *
+ * @see https://github.random-host.tv
  */
 class Stub extends Base implements Check
 {
@@ -38,12 +44,12 @@ class Stub extends Base implements Check
      * @param int    $code      Expected exit code.
      */
     public function __construct(
-        $help = '',
-        $longOpts = array(),
-        $shortOpts = '',
-        $required = array(),
-        $message = '',
-        $code = -1
+        string $help = '',
+        array $longOpts = [],
+        string $shortOpts = '',
+        array $required = [],
+        string $message = '',
+        int $code = -1
     ) {
         if ('' !== $help) {
             $this->setHelp($help);
@@ -70,7 +76,7 @@ class Stub extends Base implements Check
      *
      * @return $this
      */
-    protected function check()
+    protected function check(): Plugin
     {
         $this->setMessage($this->stubMessage);
         $this->setCode($this->stubCode);

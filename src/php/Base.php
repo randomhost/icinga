@@ -1,16 +1,17 @@
 <?php
-namespace randomhost\Icinga;
 
-use InvalidArgumentException;
-use RuntimeException;
+declare(strict_types=1);
+
+namespace randomhost\Icinga;
 
 /**
  * Base class for Icinga plugins.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2016 random-host.com
- * @license   http://www.debian.org/misc/bsd.license BSD License (3 Clause)
- * @link      http://github.random-host.com/icinga/
+ * @copyright 2022 Random-Host.tv
+ * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
+ *
+ * @see https://github.random-host.tv
  */
 abstract class Base implements Plugin
 {
@@ -34,26 +35,26 @@ abstract class Base implements Plugin
     /**
      * An array of options. Each element in this array will be used as option
      * strings and matched against options passed to the script starting with
-     * two hyphens (--). For example, an longopts element "opt" recognizes an
+     * two hyphens (--). For example, a longOptions element "opt" recognizes an
      * option --opt.
      *
      * @var array
      */
-    protected $longOptions = array('help');
+    protected $longOptions = ['help'];
 
     /**
      * Array of option / argument pairs.
      *
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Array of required option / argument pairs.
      *
      * @var array
      */
-    protected $requiredOptions = array();
+    protected $requiredOptions = [];
 
     /**
      * Icinga plugin output.
@@ -65,48 +66,40 @@ abstract class Base implements Plugin
     /**
      * Icinga return code.
      *
-     * @var integer
+     * @var int
      */
     protected $code = self::STATE_UNKNOWN;
 
     /**
      * Returns available short options.
-     *
-     * @return string
      */
-    public function getShortOptions()
+    public function getShortOptions(): string
     {
-        return (string)$this->shortOptions;
+        return $this->shortOptions;
     }
 
     /**
      * Returns available long options.
-     *
-     * @return array
      */
-    public function getLongOptions()
+    public function getLongOptions(): array
     {
         return $this->longOptions;
     }
 
     /**
      * Returns the Icinga plugin output.
-     *
-     * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
-        return (string)$this->message;
+        return $this->message;
     }
 
     /**
      * Returns the Icinga return code.
-     *
-     * @return integer
      */
-    public function getCode()
+    public function getCode(): int
     {
-        return (integer)$this->code;
+        return $this->code;
     }
 
     /**
@@ -116,7 +109,7 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): Plugin
     {
         $this->options = $options;
 
@@ -128,11 +121,11 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    protected function preRun()
+    protected function preRun(): self
     {
         if (array_key_exists('help', $this->getOptions())) {
             $this->displayHelp();
-        } // @codeCoverageIgnore
+        }
 
         $this->checkRequiredParameters();
 
@@ -144,16 +137,16 @@ abstract class Base implements Plugin
      *
      * @return $this
      *
-     * @throws InvalidArgumentException Thrown in case of missing required arguments.
+     * @throws \InvalidArgumentException Thrown in case of missing required arguments.
      */
-    protected function checkRequiredParameters()
+    protected function checkRequiredParameters(): self
     {
         $missing = array_diff(
             $this->getRequiredOptions(),
             array_keys($this->getOptions())
         );
         if (!empty($missing)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 sprintf(
                     'Missing required parameters: %s',
                     implode(', ', $missing)
@@ -170,7 +163,7 @@ abstract class Base implements Plugin
      */
     protected function displayHelp()
     {
-        throw new RuntimeException(
+        throw new \RuntimeException(
             $this->getHelp(),
             self::STATE_UNKNOWN
         );
@@ -183,21 +176,19 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    protected function setHelp($help)
+    protected function setHelp(string $help): self
     {
-        $this->help = (string)$help;
+        $this->help = $help;
 
         return $this;
     }
 
     /**
      * Returns the help message for this plugin.
-     *
-     * @return string
      */
-    protected function getHelp()
+    protected function getHelp(): string
     {
-        return (string)$this->help;
+        return $this->help;
     }
 
     /**
@@ -210,9 +201,9 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    protected function setShortOptions($options)
+    protected function setShortOptions(string $options): self
     {
-        $this->shortOptions = (string)$options;
+        $this->shortOptions = $options;
 
         return $this;
     }
@@ -226,7 +217,7 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    protected function setLongOptions(array $options)
+    protected function setLongOptions(array $options): self
     {
         $this->longOptions = array_merge($this->getLongOptions(), $options);
 
@@ -235,10 +226,8 @@ abstract class Base implements Plugin
 
     /**
      * Return an array of option / argument pairs.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return $this->options;
     }
@@ -250,7 +239,7 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    protected function setRequiredOptions(array $options)
+    protected function setRequiredOptions(array $options): self
     {
         $this->requiredOptions = $options;
 
@@ -259,10 +248,8 @@ abstract class Base implements Plugin
 
     /**
      * Returns required options.
-     *
-     * @return array
      */
-    protected function getRequiredOptions()
+    protected function getRequiredOptions(): array
     {
         return $this->requiredOptions;
     }
@@ -274,9 +261,9 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    protected function setMessage($message)
+    protected function setMessage(string $message): self
     {
-        $this->message = (string)$message;
+        $this->message = $message;
 
         return $this;
     }
@@ -288,9 +275,9 @@ abstract class Base implements Plugin
      *
      * @return $this
      */
-    protected function setCode($code)
+    protected function setCode(int $code): self
     {
-        $this->code = (integer)$code;
+        $this->code = $code;
 
         return $this;
     }
