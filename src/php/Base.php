@@ -8,7 +8,7 @@ namespace randomhost\Icinga;
  * Base class for Icinga plugins.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2022 Random-Host.tv
+ * @copyright 2025 Random-Host.tv
  * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
  *
  * @see https://github.random-host.tv
@@ -17,58 +17,44 @@ abstract class Base implements Plugin
 {
     /**
      * Help message for this plugin.
-     *
-     * @var string
      */
-    protected $help = '';
+    protected string $help = '';
 
     /**
      * Each character in this string will be used as option characters and
      * matched against options passed to the script starting with a single
      * hyphen (-). For example, an option string "x" recognizes an option -x.
      * Only a-z, A-Z and 0-9 are allowed.
-     *
-     * @var string
      */
-    protected $shortOptions = '';
+    protected string $shortOptions = '';
 
     /**
      * An array of options. Each element in this array will be used as option
      * strings and matched against options passed to the script starting with
      * two hyphens (--). For example, a longOptions element "opt" recognizes an
      * option --opt.
-     *
-     * @var array
      */
-    protected $longOptions = ['help'];
+    protected array $longOptions = ['help'];
 
     /**
      * Array of option / argument pairs.
-     *
-     * @var array
      */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * Array of required option / argument pairs.
-     *
-     * @var array
      */
-    protected $requiredOptions = [];
+    protected array $requiredOptions = [];
 
     /**
      * Icinga plugin output.
-     *
-     * @var string
      */
-    protected $message = '';
+    protected string $message = '';
 
     /**
      * Icinga return code.
-     *
-     * @var int
      */
-    protected $code = self::STATE_UNKNOWN;
+    protected int $code = self::STATE_UNKNOWN;
 
     /**
      * Returns available short options.
@@ -103,7 +89,7 @@ abstract class Base implements Plugin
     }
 
     /**
-     * Sets command line options as returned by getopt().
+     * Sets command line options as returned by {@see getopt()}.
      *
      * @param array $options Command line options.
      *

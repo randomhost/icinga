@@ -9,10 +9,10 @@ use randomhost\Icinga\Notification\Notification;
 use randomhost\Icinga\Plugin;
 
 /**
- * Testing stub for randomhost\Icinga\Check\Base.
+ * Testing stub for {@see Base}.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2022 Random-Host.tv
+ * @copyright 2025 Random-Host.tv
  * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
  *
  * @see https://github.random-host.tv
@@ -21,17 +21,13 @@ class Stub extends Base implements Notification
 {
     /**
      * Expected exit message.
-     *
-     * @var string
      */
-    private $stubMessage = '';
+    private string $stubMessage = '';
 
     /**
      * Expected exit code.
-     *
-     * @var int
      */
-    private $stubCode = Plugin::STATE_UNKNOWN;
+    private int $stubCode = Plugin::STATE_UNKNOWN;
 
     /**
      * Stub constructor.
@@ -73,8 +69,6 @@ class Stub extends Base implements Notification
 
     /**
      * Executes the main Icinga notification plugin logic.
-     *
-     * @return $this
      */
     protected function send(): Plugin
     {

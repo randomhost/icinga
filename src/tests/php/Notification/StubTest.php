@@ -8,16 +8,19 @@ use PHPUnit\Framework\TestCase;
 use randomhost\Icinga\Plugin;
 
 /**
- * Unit test for Base.
+ * Unit test for {@see Base}.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2022 Random-Host.tv
+ * @copyright 2025 Random-Host.tv
  * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
  *
  * @see https://github.random-host.tv
  */
 class StubTest extends TestCase
 {
+    /**
+     * Tests {@see Stub::run()} without parameters.
+     */
     public function testRunWithoutParameters()
     {
         $stub = new Stub();
@@ -38,6 +41,9 @@ class StubTest extends TestCase
         );
     }
 
+    /**
+     * Tests {@see Stub::run()} with help parameter.
+     */
     public function testRunWithHelpParameter()
     {
         $helpText = 'sample help output';
@@ -80,6 +86,9 @@ class StubTest extends TestCase
         );
     }
 
+    /**
+     * Tests {@see Stub::run()} with long options.
+     */
     public function testRunWithLongOptions()
     {
         $statusMessage = 'test with long options';
@@ -131,6 +140,9 @@ class StubTest extends TestCase
         );
     }
 
+    /**
+     * Tests {@see Stub::run()} with short options.
+     */
     public function testRunWithShortOptions()
     {
         $statusMessage = 'test with short options';
@@ -179,6 +191,9 @@ class StubTest extends TestCase
         );
     }
 
+    /**
+     * Tests {@see Stub::run()} with all required options set.
+     */
     public function testRunWithRequiredOptionsSet()
     {
         $statusMessage = 'test with required options';
@@ -230,6 +245,9 @@ class StubTest extends TestCase
         );
     }
 
+    /**
+     * Tests {@see Stub::run()} with required options missing.
+     */
     public function testRunWithRequiredOptionsMissing()
     {
         $statusMessage = 'test with missing required options';

@@ -8,7 +8,7 @@ namespace randomhost\Icinga;
  * Interface definition for Icinga plugins.
  *
  * @author    Ch'Ih-Yu <chi-yu@web.de>
- * @copyright 2022 Random-Host.tv
+ * @copyright 2025 Random-Host.tv
  * @license   https://opensource.org/licenses/BSD-3-Clause BSD License (3 Clause)
  *
  * @see https://github.random-host.tv
@@ -45,29 +45,21 @@ interface Plugin
 
     /**
      * Returns available short options.
-     *
-     * @return string
      */
     public function getShortOptions(): string;
 
     /**
      * Returns available long options.
-     *
-     * @return array
      */
     public function getLongOptions(): array;
 
     /**
      * Returns the Icinga plugin output.
-     *
-     * @return string
      */
     public function getMessage(): string;
 
     /**
      * Returns the Icinga return code.
-     *
-     * @return int
      */
     public function getCode(): int;
 
